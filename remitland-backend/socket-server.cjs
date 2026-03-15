@@ -72,7 +72,7 @@ const httpServer = http.createServer((req, res) => {
 // ── Socket.IO server ──
 const io = new Server(httpServer, {
     cors: {
-        origin: ['http://localhost:3000'],
+        origin: ['http://localhost:3000', 'http://remitland.duckdns.org'],
         methods: ['GET', 'POST'],
     },
 });
