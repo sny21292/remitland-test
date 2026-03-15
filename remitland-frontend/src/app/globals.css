@@ -1,0 +1,56 @@
+/**
+ * Global Styles
+ *
+ * Tailwind CSS v4 uses @import instead of @tailwind directives.
+ * All utility classes (flex, p-4, text-lg, etc.) come from this import.
+ *
+ * Custom styles below are for things Tailwind can't handle alone,
+ * like scrollbar styling and smooth transitions.
+ */
+
+@import "tailwindcss";
+
+/* ── CSS Custom Properties (like SASS variables) ── */
+:root {
+  --background: #ffffff;
+  --foreground: #1a1a1a;
+  --primary: #f5a623;
+  --primary-hover: #e6951a;
+}
+
+/* ── Base body styles ── */
+body {
+  background: var(--background);
+  color: var(--foreground);
+  /* System font stack — loads fast, looks native on all platforms */
+  font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+    sans-serif;
+}
+
+/* ── Custom scrollbar (WebKit browsers: Chrome, Safari, Edge) ── */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: #d1d5db;
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #9ca3af;
+}
+
+/* ── Smooth scroll behaviour ── */
+html {
+  scroll-behavior: smooth;
+}
+
+/* ── Focus ring for accessibility ── */
+*:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
+  border-radius: 4px;
+}

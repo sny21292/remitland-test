@@ -1,0 +1,41 @@
+{
+  "id": 1,
+  "name": "John Bonham",
+  "email": "john.bonham@email.com",
+  "type": "Individual",
+  "accounts": [
+    {
+      "currency": "AUD",
+      "flag": "🇦🇺",
+      "account_number": "7890 1234 5678",
+      "country": "Australia",
+      "bank_name": "Commonwealth Bank",
+      "branch_name": "Sydney Main Branch",
+      "swift_bic": "CTBAAU2S",
+      "bsb": "062-000",
+      "routing_number": null
+    },
+    {
+      "currency": "USD",
+      "flag": "🇺🇸",
+      "account_number": "1234 5678 9012",
+      "country": "United States",
+      "bank_name": "Chase Bank",
+      "branch_name": "New York Main Branch",
+      "swift_bic": "CHASUS33",
+      "bsb": null,
+      "routing_number": "021000021"
+    },
+    {
+      "currency": "CAD",
+      "flag": "🇨🇦",
+      "account_number": "4567 8901 2345",
+      "country": "Canada",
+      "bank_name": "Royal Bank of Canada",
+      "branch_name": "Toronto Central Branch",
+      "swift_bic": "ROYCCAT2",
+      "bsb": null,
+      "routing_number": "000300002"
+    }
+  ]
+}

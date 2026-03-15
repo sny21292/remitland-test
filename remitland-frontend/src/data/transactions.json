@@ -1,0 +1,134 @@
+[
+  {
+    "id": 1,
+    "date": "2025-12-01T10:30:00Z",
+    "request_id": "RML-20251201-001",
+    "type": "Send Money",
+    "to": "John Bonham",
+    "amount": 1500.00,
+    "currency": "USD",
+    "status": "Pending",
+    "cancel_reason": null
+  },
+  {
+    "id": 2,
+    "date": "2025-11-28T14:15:00Z",
+    "request_id": "RML-20251128-002",
+    "type": "Send Money",
+    "to": "John Bonham",
+    "amount": 2300.50,
+    "currency": "USD",
+    "status": "Approved",
+    "cancel_reason": null
+  },
+  {
+    "id": 3,
+    "date": "2025-11-25T09:00:00Z",
+    "request_id": "RML-20251125-003",
+    "type": "Conversion",
+    "to": "John Bonham",
+    "amount": 800.00,
+    "currency": "USD",
+    "status": "Success",
+    "cancel_reason": null
+  },
+  {
+    "id": 4,
+    "date": "2025-11-20T16:45:00Z",
+    "request_id": "RML-20251120-004",
+    "type": "Send Money",
+    "to": "John Bonham",
+    "amount": 5000.00,
+    "currency": "USD",
+    "status": "Cancelled",
+    "cancel_reason": "Recipient bank account details are incorrect. Please update and retry."
+  },
+  {
+    "id": 5,
+    "date": "2025-11-18T11:30:00Z",
+    "request_id": "RML-20251118-005",
+    "type": "Send Money",
+    "to": "John Bonham",
+    "amount": 1200.75,
+    "currency": "USD",
+    "status": "Rejected",
+    "cancel_reason": "Transaction flagged for compliance review. Contact support for details."
+  },
+  {
+    "id": 6,
+    "date": "2025-11-15T08:20:00Z",
+    "request_id": "RML-20251115-006",
+    "type": "Add Money",
+    "to": "John Bonham",
+    "amount": 10000.00,
+    "currency": "USD",
+    "status": "Success",
+    "cancel_reason": null
+  },
+  {
+    "id": 7,
+    "date": "2025-11-10T13:00:00Z",
+    "request_id": "RML-20251110-007",
+    "type": "Send Money",
+    "to": "John Bonham",
+    "amount": 3500.00,
+    "currency": "AUD",
+    "status": "Success",
+    "cancel_reason": null
+  },
+  {
+    "id": 8,
+    "date": "2025-11-05T17:30:00Z",
+    "request_id": "RML-20251105-008",
+    "type": "Send Money",
+    "to": "John Bonham",
+    "amount": 750.25,
+    "currency": "AUD",
+    "status": "Pending",
+    "cancel_reason": null
+  },
+  {
+    "id": 9,
+    "date": "2025-10-30T10:00:00Z",
+    "request_id": "RML-20251030-009",
+    "type": "Conversion",
+    "to": "John Bonham",
+    "amount": 2000.00,
+    "currency": "CAD",
+    "status": "Approved",
+    "cancel_reason": null
+  },
+  {
+    "id": 10,
+    "date": "2025-10-25T15:45:00Z",
+    "request_id": "RML-20251025-010",
+    "type": "Send Money",
+    "to": "John Bonham",
+    "amount": 4200.00,
+    "currency": "CAD",
+    "status": "Success",
+    "cancel_reason": null
+  },
+  {
+    "id": 11,
+    "date": "2025-10-20T09:15:00Z",
+    "request_id": "RML-20251020-011",
+    "type": "Send Money",
+    "to": "John Bonham",
+    "amount": 900.00,
+    "currency": "USD",
+    "status": "Pending",
+    "cancel_reason": null
+  },
+  {
+    "id": 12,
+    "date": "2025-10-15T14:30:00Z",
+    "request_id": "RML-20251015-012",
+    "type": "Add Money",
+    "to": "John Bonham",
+    "amount": 6000.00,
+    "currency": "USD",
+    "status": "Success",
+    "cancel_reason": null
+  }
+]
