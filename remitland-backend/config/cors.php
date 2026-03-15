@@ -3,7 +3,7 @@
 return [
     'paths' => ['api/*'],
     'allowed_methods' => ['*'],
-    'allowed_origins' => ['http://localhost:3000', 'http://remitland.duckdns.org'],
+    'allowed_origins' => ['http://localhost:3000', 'http://remitland.duckdns.org', 'https://remitland.duckdns.org'],
     'allowed_origins_patterns' => [],
     'allowed_headers' => ['*'],
     'exposed_headers' => [],

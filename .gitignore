@@ -31,3 +31,7 @@ bootstrap/cache/*
 
 # Claude Code
 .claude/
+
+# Personal notes
+PROJECT_JOURNEY.md
+INTERVIEW_PREP.md
