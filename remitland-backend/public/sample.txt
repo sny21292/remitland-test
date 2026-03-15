@@ -1,0 +1,11 @@
+=== RemitLand Transaction Receipt ===
+
+Transaction ID: 6A5S1D5A
+Date: Apr 19 2025 | 14:30
+Type: Send Money (International)
+To: John Bonham
+Amount: USD 12,000.00
+Status: Success
+
+Thank you for using RemitLand!
+This is a sample receipt document.

@@ -17,6 +17,6 @@ Route::get('/currencies', [CurrencyController::class, 'index']);
 
 // Download sample file
 Route::get('/download', function () {
-    $path = storage_path('app/public/sample.txt');
+    $path = public_path('sample.txt');
     return response()->download($path, 'RemitLand_Receipt.txt');
 });
