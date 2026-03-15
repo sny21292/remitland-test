@@ -1,0 +1,10 @@
+FROM node:20-alpine
+
+WORKDIR /app
+COPY package.json package-lock.json ./
+RUN npm ci --production
+COPY socket-server.cjs .
+
+EXPOSE 6001
+
+CMD ["node", "socket-server.cjs"]

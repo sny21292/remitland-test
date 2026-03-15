@@ -1,0 +1,92 @@
+# Docker Compose - runs the full RemitLand stack locally or on AWS EC2
+#
+# Services:
+#   1. backend    - Laravel PHP API (port 8000)
+#   2. frontend   - Next.js React app (port 3000)
+#   3. socket     - Socket.IO real-time server (port 6001)
+#   4. redis      - Caching + pub/sub
+#   5. queue      - Laravel queue worker (processes queued transactions)
+#
+# Usage:
+#   docker-compose up -d          # Start all services
+#   docker-compose logs -f        # Watch logs
+#   docker-compose down           # Stop all services
+
+version: "3.8"
+
+services:
+  # ── Redis ──
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+
+  # ── Laravel Backend API ──
+  backend:
+    build:
+      context: ./remitland-backend
+      dockerfile: Dockerfile
+    ports:
+      - "8000:8000"
+    environment:
+      - DB_CONNECTION=pgsql
+      - DB_HOST=${SUPABASE_DB_HOST:-localhost}
+      - DB_PORT=${SUPABASE_DB_PORT:-5432}
+      - DB_DATABASE=${SUPABASE_DB_NAME:-postgres}
+      - DB_USERNAME=${SUPABASE_DB_USER:-postgres}
+      - DB_PASSWORD=${SUPABASE_DB_PASSWORD:-}
+      - CACHE_DRIVER=redis
+      - REDIS_HOST=redis
+      - QUEUE_CONNECTION=database
+      - SOCKET_SERVER_URL=http://socket:6001
+    depends_on:
+      - redis
+
+  # ── Queue Worker (processes queued transactions) ──
+  queue:
+    build:
+      context: ./remitland-backend
+      dockerfile: Dockerfile
+    command: php artisan queue:work --sleep=3 --tries=3
+    environment:
+      - DB_CONNECTION=pgsql
+      - DB_HOST=${SUPABASE_DB_HOST:-localhost}
+      - DB_PORT=${SUPABASE_DB_PORT:-5432}
+      - DB_DATABASE=${SUPABASE_DB_NAME:-postgres}
+      - DB_USERNAME=${SUPABASE_DB_USER:-postgres}
+      - DB_PASSWORD=${SUPABASE_DB_PASSWORD:-}
+      - CACHE_DRIVER=redis
+      - REDIS_HOST=redis
+      - QUEUE_CONNECTION=database
+      - SOCKET_SERVER_URL=http://socket:6001
+    depends_on:
+      - redis
+
+  # ── Socket.IO Server ──
+  socket:
+    build:
+      context: ./remitland-backend
+      dockerfile: Dockerfile.socket
+    ports:
+      - "6001:6001"
+    environment:
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+    depends_on:
+      - redis
+
+  # ── Next.js Frontend ──
+  frontend:
+    build:
+      context: ./remitland-frontend
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    environment:
+      - NEXT_PUBLIC_API_URL=http://backend:8000/api
+      - NEXT_PUBLIC_SOCKET_URL=http://socket:6001
+
+volumes:
+  redis_data:

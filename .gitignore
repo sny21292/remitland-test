@@ -1,0 +1,33 @@
+# Dependencies
+node_modules/
+vendor/
+
+# Environment files (contain secrets)
+.env
+!.env.example
+!.env.supabase
+
+# Build outputs
+.next/
+.nuxt/
+
+# Database
+*.sqlite
+
+# IDE
+.idea/
+.vscode/
+*.swp
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Laravel
+storage/logs/*
+!storage/logs/.gitkeep
+bootstrap/cache/*
+!bootstrap/cache/.gitkeep
+
+# Claude Code
+.claude/
