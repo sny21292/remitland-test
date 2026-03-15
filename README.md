@@ -2,6 +2,8 @@
 
 A full-stack transaction dashboard with real-time updates, built with **Next.js + TypeScript + TailwindCSS** (frontend) and **Laravel 10 + PHP** (backend).
 
+**Live Demo**: [https://remitland.duckdns.org](https://remitland.duckdns.org)
+
 ## Tech Stack
 
 | Layer            | Technology                                    |
@@ -9,10 +11,13 @@ A full-stack transaction dashboard with real-time updates, built with **Next.js 
 | Frontend         | Next.js 16, React 19, TypeScript, TailwindCSS |
 | State Management | Redux Toolkit                                 |
 | Backend          | Laravel 10, PHP 8.2                           |
-| Database         | Supabase (PostgreSQL) / SQLite for dev        |
-| Caching          | Redis (file-based fallback)                   |
+| Database         | Supabase (PostgreSQL)                         |
+| Caching          | Redis                                         |
 | Real-time        | Socket.IO (Node.js server)                    |
 | Queue            | Laravel Database Queue                        |
+| Deployment       | Docker, Nginx, AWS EC2                        |
+| CI/CD            | GitHub Actions                                |
+| DNS              | DuckDNS + Let's Encrypt SSL                   |
 
 ## Project Structure
 
@@ -36,7 +41,9 @@ full-stack-test/
 │   │   ├── migrations/         # DB schema
 │   │   └── seeders/            # Sample data
 │   └── socket-server.cjs       # Node.js Socket.IO server
-├── docker-compose.yml          # Docker deployment
+├── docker-compose.yml          # Docker orchestration (6 services)
+├── nginx.conf                  # Nginx reverse proxy with SSL
+├── .github/workflows/deploy.yml # CI/CD auto-deploy on push
 ├── DEPLOY_AWS.md               # AWS deployment guide
 └── README.md
 ```
@@ -49,7 +56,7 @@ full-stack-test/
 - npm
 - Redis (optional — app works without it)
 
-## Setup Instructions
+## Local Development Setup
 
 ### 1. Backend (Laravel)
 
@@ -61,7 +68,7 @@ composer install
 
 # Create SQLite database & seed sample data
 touch database/database.sqlite
-php artisan migrate:fresh --seed
+DB_CONNECTION=sqlite DB_DATABASE=$(pwd)/database/database.sqlite php artisan migrate:fresh --seed
 
 # Start the Laravel API server
 php artisan serve --port=8000
@@ -109,21 +116,22 @@ php artisan queue:work
 php artisan transactions:queue --currency=USD
 ```
 
-### 5. Supabase (PostgreSQL) — Optional
+### 5. Supabase (PostgreSQL)
 
 To use Supabase instead of SQLite:
 
 1. Create a project at [supabase.com](https://supabase.com)
-2. Update `remitland-backend/.env`:
+2. Use **Session Pooler** connection (IPv4 compatible)
+3. Update `remitland-backend/.env`:
 ```env
 DB_CONNECTION=pgsql
-DB_HOST=db.your-project.supabase.co
+DB_HOST=aws-0-region.pooler.supabase.com
 DB_PORT=5432
 DB_DATABASE=postgres
-DB_USERNAME=postgres
+DB_USERNAME=postgres.your-project-ref
 DB_PASSWORD=your-password
 ```
-3. Run `php artisan migrate:fresh --seed`
+4. Run `php artisan migrate:fresh --seed`
 
 ## API Endpoints
 
@@ -138,8 +146,8 @@ DB_PASSWORD=your-password
 ## Features
 
 - **Receivers Page** (`/`): Single "View Receiver" CTA that opens the popup
-- **Receiver Modal** (Appendix 1): Receiver info, currency tabs (AUD/USD/CAD), bank details, transactions table
-- **Dashboard Page** (`/dashboard`, Appendix 2): Account balance, quick conversion, transaction list — clicking a transaction opens the popup
+- **Receiver Modal**: Receiver info, currency tabs (AUD/USD/CAD), bank details, transactions table
+- **Dashboard Page** (`/dashboard`): Account balance, quick conversion, transaction list
 - **Currency Tabs**: Click any currency to load its transactions. USD selected by default
 - **Persisted Currency**: Last selected currency saved to localStorage, restored when popup reopens
 - **Real-time Status Updates**: Change a status in one browser → all other browsers update instantly via Socket.IO
@@ -148,20 +156,20 @@ DB_PASSWORD=your-password
 - **Download CTA**: Downloads a sample receipt file
 - **Mobile Responsive**: Popup and dashboard fully responsive
 - **Redis Caching**: API responses cached with automatic invalidation on status change
+- **SSL/HTTPS**: Let's Encrypt certificate via Certbot
 
 ## Real-time Demo
 
 To see real-time updates in action:
 
-1. Start all 3 servers (Laravel, Socket.IO, Next.js)
-2. Open `http://localhost:3000` in **two different browser windows**
-3. Click "View Receiver" in both
-4. In Window A: click the dropdown arrow (▼) next to any transaction → change status
-5. Watch Window B — the status badge updates instantly
+1. Open [https://remitland.duckdns.org](https://remitland.duckdns.org) in **two different browser windows**
+2. Click "View Receiver" in both
+3. In Window A: click the dropdown arrow next to any transaction → change status
+4. Watch Window B — the status badge updates instantly
 
 To see queued transactions appear:
 1. Keep the popup open in a browser
-2. In terminal: `php artisan transactions:queue --currency=USD`
+2. SSH into the server and run: `docker-compose exec backend php artisan transactions:queue --currency=USD`
 3. The new transaction appears in the popup within ~2 seconds
 
 ## Architecture
@@ -184,16 +192,47 @@ Queue Worker picks up Job → Changes status to "Pending" → HTTP POST to Socke
 
 ## Docker Deployment
 
-```bash
-# Set Supabase credentials
-export SUPABASE_DB_HOST=db.your-project.supabase.co
-export SUPABASE_DB_PASSWORD=your-password
+The app runs as 6 Docker services orchestrated by `docker-compose`:
 
-# Build and start
+| Service    | Description                          |
+| ---------- | ------------------------------------ |
+| `nginx`    | Reverse proxy with SSL (ports 80/443)|
+| `backend`  | Laravel PHP API                      |
+| `frontend` | Next.js React app                    |
+| `socket`   | Socket.IO real-time server           |
+| `queue`    | Laravel queue worker                 |
+| `redis`    | Caching and pub/sub                  |
+
+```bash
+# Build and start all services
 docker-compose up -d --build
 
-# Run migrations
-docker-compose exec backend php artisan migrate:fresh --seed
+# Check status
+docker-compose ps
+
+# View logs
+docker-compose logs -f
+
+# Stop all services
+docker-compose down
 ```
 
-See [DEPLOY_AWS.md](DEPLOY_AWS.md) for full AWS deployment instructions.
+## CI/CD
+
+GitHub Actions auto-deploys on every push to `main`:
+
+1. Push code to `main` branch
+2. GitHub Action SSHs into EC2
+3. Runs `git pull && docker-compose up -d --build`
+
+Required GitHub Secrets: `EC2_HOST`, `EC2_USER`, `EC2_SSH_KEY`
+
+## AWS Infrastructure
+
+- **EC2**: t3.small (us-east-1)
+- **Elastic IP**: Static IP for consistent DNS
+- **DuckDNS**: Free subdomain pointing to Elastic IP
+- **Let's Encrypt**: Free SSL certificate via Certbot
+- **Security Group**: Ports 22 (SSH), 80 (HTTP), 443 (HTTPS)
+
+See [DEPLOY_AWS.md](DEPLOY_AWS.md) for full deployment instructions.

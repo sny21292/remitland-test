@@ -63,7 +63,12 @@ export default function TransactionTable({
   };
 
   const formatDate = (dateString: string): string => {
+    // The API already returns a formatted string like "Apr 19 2025 | 14:30"
+    // so we display it directly. If it's an ISO string, we format it.
     const date = new Date(dateString);
+    if (isNaN(date.getTime())) {
+      return dateString; // Already formatted by the API
+    }
     return date.toLocaleDateString("en-US", {
       month: "short",
       day: "numeric",
